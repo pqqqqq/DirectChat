@@ -1,0 +1,55 @@
+DirectChat - A chat management plugin that includes channels, private channels and private messaging.
+Throughout this documentation, arguments enclosed in <> are necessary, whereas arguments in [] are optional. If a ... is place in an argument (e.g <message ...>), then that argument extends for the rest of the command, including any spaces.
+
+
+Commands:
+	Admin:
+		Command aliases: /admin, /a
+		What it does: Accesses the admin chat channel as defined in the config (admin=true).
+		Usage: /a [message ...]. Specify a message to type directly in the channel, or just type the command to toggle admin chat as the active channel.
+		Permissions: As specified in the config for the channel.
+	DirectChat:
+		Command aliases: /directchat, /dc
+		What it does: The main plugin command. Administrative purposes and stuffz.
+		Usage: /dc <reload|info> [player]. Either reload the plugin config, or print out the info for a member.
+		Permissions: 
+			For reload: directchat.reload
+			For info: directchat.info
+	Join:
+		Command aliases: /join, /j, /jc
+		What it does: Joins a chat channel.
+		Usage: /j [channel]. Not specifying a channel will print out the channels the member is permissible to join.
+		Permissions: None (unique for each channel as defined in the config).
+	Leave:
+		Command aliases: /leave, /l, /lc
+		What it does: Leaves a chat channel.
+		Usage: /l [channel]. Not specifying a channel will print out the member's current channels.
+		Permissions: None.
+	PM:
+		Command aliases: /pm, /message, /m, /whisper, /tell, /w, /msg, /t, /r, /respond
+		What it does: Private messages a player in the server.
+		Usage: /pm [player] <message ...>. Not specifying a player will message the last player who you messaged or who messaged you.
+		Permissions: None
+	PrivateChannels:
+		Command aliases: /p, /private, /pc
+		What it does: Private channels stuff. Creating and managing a private channel.
+		Usage: /p <create|invite|kick>. Either create a new private channel (must specify a name), invite a new player (must specify player), or kick a player (must specify a player).
+		Permissions: None (invite and kick require you to be the owner of the channel).
+	Select:
+		Command aliases: /select, /s, /sc
+		What it does: Selects the current active channel.
+		Usage: /s [channel]. Not specifying a channel will print out both the user's current channel and the channels the user can select right now (non-active channels).
+		Permissions: None.
+	Snooper:
+		Command aliases: /snooper
+		What it does: Allows an admin to see into public and private channels, as well as whispers.
+		Usage: /snooper <whisper|private|public>. The snooper type to toggle.
+		Permissions: (Note: If a player has the permission for one of these, they will be, by default, toggled on when they join).
+			For public: directchat.snooper.public
+			For private: directchat.snooper.private
+			For whispering: directchat.snooper.whisper
+
+Additional permissions:
+	directchat.colour: The ability to type messages in colour.
+	directchat.bypass.url: Bypass the URL filter.
+	directchat.see-ad: Be notified when a player attempts to post a URL.
