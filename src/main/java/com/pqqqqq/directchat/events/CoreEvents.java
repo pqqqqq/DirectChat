@@ -1,12 +1,10 @@
 package com.pqqqqq.directchat.events;
 
-import com.pqqqqq.directchat.Config;
 import com.pqqqqq.directchat.DirectChat;
 import com.pqqqqq.directchat.channel.Channel;
 import com.pqqqqq.directchat.channel.PrivateChannel;
 import com.pqqqqq.directchat.channel.member.Member;
 import com.pqqqqq.directchat.util.Utilities;
-import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.Subscribe;
