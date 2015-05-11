@@ -8,6 +8,7 @@ import com.pqqqqq.directchat.channel.member.Member;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.command.CommandException;
 import org.spongepowered.api.util.command.CommandResult;
 import org.spongepowered.api.util.command.CommandSource;
@@ -25,17 +26,17 @@ public class CommandJoin extends CommandBase {
 
     public Optional<CommandResult> process(CommandSource commandSource, String s) throws CommandException {
         if (!(commandSource instanceof Player)) {
-            commandSource.sendMessage(getErrorMessage("Player-only command."));
+            commandSource.sendMessage(Texts.of(TextColors.RED, "Player-only command."));
             return Optional.of(CommandResult.success());
         }
 
         Player player = (Player) commandSource;
-        Member member = getPlugin().getMembers().getValue(player.getUniqueId().toString());
+        Member member = plugin.getMembers().getValue(player.getUniqueId().toString());
 
         if (s.trim().isEmpty()) {
             String print = "";
 
-            for (Channel channel : getPlugin().getChannels().getMap().values()) {
+            for (Channel channel : plugin.getChannels().getMap().values()) {
                 if (channel.isUndetectable() || channel.getMembers().contains(member)) {
                     continue;
                 }
@@ -54,16 +55,16 @@ public class CommandJoin extends CommandBase {
             }
 
             if (print.isEmpty()) {
-                commandSource.sendMessage(getErrorMessage("There are no channels available for you to join."));
+                commandSource.sendMessage(Texts.of(TextColors.RED, "There are no channels available for you to join."));
             } else {
-                commandSource.sendMessage(getSuccessMessage("Available channels: &f" + print.substring(0, print.length() - 2)));
+                commandSource.sendMessage(Texts.of(TextColors.GREEN, "Available channels: ", TextColors.WHITE, print.substring(0, print.length() - 2)));
             }
             return Optional.of(CommandResult.success());
         }
 
-        Channel toJoin = getPlugin().getChannels().getValue(s.trim());
+        Channel toJoin = plugin.getChannels().getValue(s.trim());
         if (member.enterChannel(toJoin)) {
-            commandSource.sendMessage(getSuccessMessage("Successfully joined channel: &f" + toJoin.getName()));
+            commandSource.sendMessage(Texts.of(TextColors.GREEN, "Successfully joined channel: ", TextColors.WHITE, toJoin.getName()));
         }
         return Optional.of(CommandResult.success());
     }

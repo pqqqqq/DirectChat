@@ -7,6 +7,7 @@ import com.pqqqqq.directchat.channel.member.SnooperData;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.command.CommandException;
 import org.spongepowered.api.util.command.CommandResult;
 import org.spongepowered.api.util.command.CommandSource;
@@ -24,7 +25,7 @@ public class CommandSnooper extends CommandBase {
 
     public Optional<CommandResult> process(CommandSource commandSource, String s) throws CommandException {
         if (!(commandSource instanceof Player)) {
-            commandSource.sendMessage(getErrorMessage("Player-only command"));
+            commandSource.sendMessage(Texts.of(TextColors.RED, "Player-only command."));
             return Optional.of(CommandResult.success());
         }
 
@@ -32,39 +33,39 @@ public class CommandSnooper extends CommandBase {
         String type = s.trim();
 
         if (type.isEmpty()) {
-            commandSource.sendMessage(getErrorMessage(getUsage(commandSource)));
+            commandSource.sendMessage(Texts.of(TextColors.RED, getUsage(commandSource)));
             return Optional.of(CommandResult.success());
         }
 
-        Member member = getPlugin().getMembers().getValue(player.getProfile().getUniqueId().toString());
+        Member member = plugin.getMembers().getValue(player.getProfile().getUniqueId().toString());
         SnooperData snooper = member.getSnooperData();
 
         if (type.equalsIgnoreCase("private")) {
             if (!player.hasPermission("directchat.snooper.private")) {
-                commandSource.sendMessage(getErrorMessage("Insufficient permissions"));
+                commandSource.sendMessage(Texts.of(TextColors.RED, "Insufficient permissions."));
                 return Optional.of(CommandResult.success());
             }
 
             snooper.setPrivate(!snooper.isPrivate());
-            player.sendMessage(getSuccessMessage("Private snooper: &f" + (snooper.isPrivate() ? "ON" : "OFF")));
+            commandSource.sendMessage(Texts.of(TextColors.GREEN, "Private snooper: ", TextColors.WHITE, (snooper.isPrivate() ? "ON" : "OFF")));
         } else if (type.equalsIgnoreCase("public")) {
             if (!player.hasPermission("directchat.snooper.public")) {
-                commandSource.sendMessage(getErrorMessage("Insufficient permissions"));
+                commandSource.sendMessage(Texts.of(TextColors.RED, "Insufficient permissions."));
                 return Optional.of(CommandResult.success());
             }
 
             snooper.setPublic(!snooper.isPublic());
-            player.sendMessage(getSuccessMessage("Public snooper: &f" + (snooper.isPublic() ? "ON" : "OFF")));
+            commandSource.sendMessage(Texts.of(TextColors.GREEN, "Public snooper: ", TextColors.WHITE, (snooper.isPublic() ? "ON" : "OFF")));
         } else if (type.equalsIgnoreCase("whisper")) {
             if (!player.hasPermission("directchat.snooper.whisper")) {
-                commandSource.sendMessage(getErrorMessage("Insufficient permissions"));
+                commandSource.sendMessage(Texts.of(TextColors.RED, "Insufficient permissions."));
                 return Optional.of(CommandResult.success());
             }
 
             snooper.setWhisper(!snooper.isWhisper());
-            player.sendMessage(getSuccessMessage("Whisper snooper: &f" + (snooper.isWhisper() ? "ON" : "OFF")));
+            commandSource.sendMessage(Texts.of(TextColors.GREEN, "Whisper snooper: ", TextColors.WHITE, (snooper.isWhisper() ? "ON" : "OFF")));
         } else {
-            commandSource.sendMessage(getErrorMessage("Invalid type: &f" + type));
+            commandSource.sendMessage(Texts.of(TextColors.RED, "Invalid type: ", TextColors.WHITE, type));
         }
         return Optional.of(CommandResult.success());
     }

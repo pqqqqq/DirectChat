@@ -7,6 +7,7 @@ import com.pqqqqq.directchat.channel.member.Member;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.command.CommandException;
 import org.spongepowered.api.util.command.CommandResult;
 import org.spongepowered.api.util.command.CommandSource;
@@ -24,15 +25,15 @@ public class CommandLeave extends CommandBase {
 
     public Optional<CommandResult> process(CommandSource commandSource, String s) throws CommandException {
         if (!(commandSource instanceof Player)) {
-            commandSource.sendMessage(getErrorMessage("Player-only command."));
+            commandSource.sendMessage(Texts.of(TextColors.RED, "Player-only command."));
             return Optional.of(CommandResult.success());
         }
 
         Player player = (Player) commandSource;
-        Member member = getPlugin().getMembers().getValue(player.getUniqueId().toString());
+        Member member = plugin.getMembers().getValue(player.getUniqueId().toString());
 
         if (s.trim().isEmpty()) {
-            commandSource.sendMessage(getNormalMessage("Current channels: &f" + member.getChannels().getDetectableChannels().toString()));
+            commandSource.sendMessage(Texts.of(TextColors.AQUA, "Current channels: ", TextColors.WHITE, member.getChannels().getDetectableChannels().toString()));
             return Optional.of(CommandResult.success());
         }
 
@@ -45,12 +46,12 @@ public class CommandLeave extends CommandBase {
         }
 
         if (toLeave == null) {
-            commandSource.sendMessage(getErrorMessage("Could not find specified channel."));
+            commandSource.sendMessage(Texts.of(TextColors.RED, "Could not find specified channel."));
             return Optional.of(CommandResult.success());
         }
 
         if (member.leaveChannel(toLeave)) {
-            commandSource.sendMessage(getSuccessMessage("Successfully left channel: &f" + toLeave.getName()));
+            commandSource.sendMessage(Texts.of(TextColors.GREEN, "Successfully left channel: ", TextColors.WHITE, toLeave.getName()));
         }
         return Optional.of(CommandResult.success());
     }

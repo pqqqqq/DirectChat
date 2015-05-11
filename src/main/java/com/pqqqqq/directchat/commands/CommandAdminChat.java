@@ -8,6 +8,7 @@ import com.pqqqqq.directchat.util.Utilities;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.command.CommandException;
 import org.spongepowered.api.util.command.CommandResult;
 import org.spongepowered.api.util.command.CommandSource;
@@ -25,26 +26,26 @@ public class CommandAdminChat extends CommandBase {
 
     public Optional<CommandResult> process(CommandSource commandSource, String s) throws CommandException {
         if (!(commandSource instanceof Player)) {
-            commandSource.sendMessage(getErrorMessage("Player-only command"));
+            commandSource.sendMessage(Texts.of(TextColors.RED, "Player-only command."));
             return Optional.of(CommandResult.success());
         }
 
         Player player = (Player) commandSource;
-        Member member = getPlugin().getMembers().getValue(player.getUniqueId().toString());
+        Member member = plugin.getMembers().getValue(player.getUniqueId().toString());
 
         if (Channel.admin == null) {
-            commandSource.sendMessage(getErrorMessage("There is no admin chat setup."));
+            commandSource.sendMessage(Texts.of(TextColors.RED, "There is no admin chat setup."));
             return Optional.of(CommandResult.success());
         }
 
         if (!Channel.admin.getMembers().contains(member)) {
-            commandSource.sendMessage(getErrorMessage("You must be in the admin channel."));
+            commandSource.sendMessage(Texts.of(TextColors.RED, "You must be in the admin channel."));
             return Optional.of(CommandResult.success());
         }
 
         if (Channel.admin.hasPermissions(member) != Channel.EnterResult.SUCCESS) {
             member.leaveChannel(Channel.admin);
-            commandSource.sendMessage(getErrorMessage("You have been booted from the admin channel, how did you get here?"));
+            commandSource.sendMessage(Texts.of(TextColors.RED, "You have been booted from the admin channel, how did you get here?"));
             return Optional.of(CommandResult.success());
         }
 
@@ -52,10 +53,10 @@ public class CommandAdminChat extends CommandBase {
             // Toggle admin chat
             if (member.getActive().equals(Channel.admin)) {
                 member.setActive(Channel.def);
-                commandSource.sendMessage(getNormalMessage("Admin chat toggled: &fOFF."));
+                commandSource.sendMessage(Texts.of(TextColors.AQUA, "Admin chat toggled: ", TextColors.WHITE, "OFF"));
             } else {
                 member.setActive(Channel.admin);
-                commandSource.sendMessage(getNormalMessage("Admin chat toggled: &fON."));
+                commandSource.sendMessage(Texts.of(TextColors.AQUA, "Admin chat toggled: ", TextColors.WHITE, "ON"));
             }
         } else {
             // Say into admin chat

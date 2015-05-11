@@ -7,6 +7,7 @@ import com.pqqqqq.directchat.channel.member.Member;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.command.CommandException;
 import org.spongepowered.api.util.command.CommandResult;
 import org.spongepowered.api.util.command.CommandSource;
@@ -27,22 +28,22 @@ public class CommandSelect extends CommandBase {
 
     public Optional<CommandResult> process(CommandSource commandSource, String s) throws CommandException {
         if (!(commandSource instanceof Player)) {
-            commandSource.sendMessage(getErrorMessage("Player-only command"));
+            commandSource.sendMessage(Texts.of(TextColors.RED, "Player-only command."));
             return Optional.of(CommandResult.success());
         }
 
         Player player = (Player) commandSource;
-        Member member = getPlugin().getMembers().getValue(player.getUniqueId().toString());
+        Member member = plugin.getMembers().getValue(player.getUniqueId().toString());
 
         if (s.trim().isEmpty()) {
             if (member.getActive() != null && !member.getActive().isUndetectable()) {
-                commandSource.sendMessage(getNormalMessage("Current active channel: &f" + member.getActive().toString()));
+                commandSource.sendMessage(Texts.of(TextColors.AQUA, "Current active channel: ", TextColors.WHITE, member.getActive().toString()));
             }
 
             Set<Channel> woC = new HashSet<Channel>(member.getChannels().getDetectableChannels());
             woC.remove(member.getActive());
 
-            commandSource.sendMessage(getNormalMessage("Selectable channels: &f" + woC.toString()));
+            commandSource.sendMessage(Texts.of(TextColors.AQUA, "Selectable channels: ", TextColors.WHITE, woC.toString()));
             return Optional.of(CommandResult.success());
         }
 
@@ -55,12 +56,12 @@ public class CommandSelect extends CommandBase {
         }
 
         if (select == null) {
-            commandSource.sendMessage(getErrorMessage("You cannot select a channel you are not a part of. Use &f/join."));
+            commandSource.sendMessage(Texts.of(TextColors.RED, "You cannot select a channel you are not a part of. Use ", TextColors.WHITE, "/join", TextColors.RED, " first."));
             return Optional.of(CommandResult.success());
         }
 
         member.setActive(select);
-        commandSource.sendMessage(getSuccessMessage("Successfully select channel: &f" + select.getName()));
+        commandSource.sendMessage(Texts.of(TextColors.GREEN, "Successfully select channel: ", TextColors.WHITE, select.getName()));
         return Optional.of(CommandResult.success());
     }
 
