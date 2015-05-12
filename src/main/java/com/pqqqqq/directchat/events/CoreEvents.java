@@ -1,10 +1,12 @@
 package com.pqqqqq.directchat.events;
 
+import com.pqqqqq.directchat.Config;
 import com.pqqqqq.directchat.DirectChat;
 import com.pqqqqq.directchat.channel.Channel;
 import com.pqqqqq.directchat.channel.PrivateChannel;
 import com.pqqqqq.directchat.channel.member.Member;
 import com.pqqqqq.directchat.util.Utilities;
+import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.Subscribe;
@@ -57,12 +59,6 @@ public class CoreEvents {
             return;
         }
 
-        // Make sure they can still be here
-        if (channel.hasPermissions(member) != Channel.EnterResult.SUCCESS) {
-            member.leaveChannel(channel); // Kick this buffoon
-            return;
-        }
-
         String format = channel.formatMessage(player, member, raw);
         Text formatted = Texts.of(format);
 
@@ -70,21 +66,19 @@ public class CoreEvents {
         plugin.getLogger().info(Utilities.unformatColours(format));
 
         for (Member channelMember : plugin.getMembers().getMap().values()) {
-            // Sound player's name if mentioned
-            //if (Config.soundOnMention && channelMember.isOnline() && format.toLowerCase().contains(channelMember.getLastCachedUsername().toLowerCase())) {
+            // First and foremost check if this player is online to receive a message. Also check if they have any mutes on.
+            if (channelMember.isMuteAllChannels() || !channelMember.isOnline()) {
+                continue;
+            }
+
+            // Sound player's name if mentioned TODO: Readd when implemented
+            //if (Config.soundOnMention && format.toLowerCase().contains(channelMember.getLastCachedUsername().toLowerCase())) {
             //    channelMember.getPlayer().get().playSound(SoundTypes.SUCCESSFUL_HIT, channelMember.getPlayer().get().getLocation().getPosition(), 60D);
             //}
 
-            // If this member is in the channel, then
-            if (channel.getMembers().contains(channelMember)) {
-                // First ensure that they can still be in the channel
-                if (!member.equals(channelMember) && channel.hasPermissions(channelMember) != Channel.EnterResult.SUCCESS) { // We've already checked the sender
-                    channelMember.leaveChannel(channel); // Kick this buffoon
-                }
-
-                if (channel.canSpeak(member, channelMember)) { // Check if the sender can speak to this member, and send if they can.
-                    channelMember.sendMessage(formatted); // Send the formatted message to the member
-                }
+            // If this member is in the channel, then check if the sender can speak to this member, and send if they can.
+            if (channel.getMembers().contains(channelMember) && channel.canSpeak(member, channelMember)) {
+                channelMember.sendMessage(formatted); // Send the formatted message to the member
                 continue;
             }
 

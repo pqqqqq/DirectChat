@@ -13,9 +13,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Kevin on 2015-05-03.
@@ -23,10 +21,14 @@ import java.util.UUID;
  */
 public final class Member {
     private final String uuid;
+    private final ChannelSet channels = new ChannelSet();
     private Channel active = null;
 
+    // Command settings
     private Optional<Member> respond = Optional.<Member> absent();
-    private final ChannelSet channels = new ChannelSet();
+    private Set<Channel> muted = new HashSet<Channel>();
+    private boolean muteAllChannels = false;
+    private boolean muteInvitations = false;
 
     // Cache
     private String lastCachedUsername;
@@ -226,7 +228,7 @@ public final class Member {
         if (channel instanceof PrivateChannel) {
             PrivateChannel pc = (PrivateChannel) channel;
             if (equals(pc.getOwner())) {
-                pc.disintegrate();
+                pc.disintegrate(messages);
             }
         }
 
@@ -346,6 +348,46 @@ public final class Member {
      */
     public boolean isActive() {
         return (System.currentTimeMillis() - this.lastActive) < Config.millisLastActive;
+    }
+
+    /**
+     * Gets a {@link Set} of muted {@link Channel}s
+     * @return a set of muted channels
+     */
+    public Set<Channel> getMuted() {
+        return muted;
+    }
+
+    /**
+     * Returns if all channels are muted.
+     * @return true if all channels are muted
+     */
+    public boolean isMuteAllChannels() {
+        return muteAllChannels;
+    }
+
+    /**
+     * Sets if all channels are muted.
+     * @param muteAllChannels the new calue of all channels being muted
+     */
+    public void setMuteAllChannels(boolean muteAllChannels) {
+        this.muteAllChannels = muteAllChannels;
+    }
+
+    /**
+     * Returns if invitations are muted, or disallowed.
+     * @return true if invitations are off.
+     */
+    public boolean isMuteInvitations() {
+        return muteInvitations;
+    }
+
+    /**
+     * Sets if invitations are muted, or disallowed.
+     * @param muteInvitations new value of invitations
+     */
+    public void setMuteInvitations(boolean muteInvitations) {
+        this.muteInvitations = muteInvitations;
     }
 
     /**

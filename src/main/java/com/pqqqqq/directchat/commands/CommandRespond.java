@@ -16,11 +16,11 @@ import org.spongepowered.api.util.command.CommandSource;
 /**
  * Created by Kevin on 2015-05-04.
  */
-public class CommandPM extends CommandBase {
-    private static final Optional<Text> desc = Optional.<Text> of(Texts.of("Send a private message to a player."));
-    private static final Optional<Text> help = Optional.<Text> of(Texts.of("Send a private message to a player."));
+public class CommandRespond extends CommandBase {
+    private static final Optional<Text> desc = Optional.<Text> of(Texts.of("Send a response private message to a player."));
+    private static final Optional<Text> help = Optional.<Text> of(Texts.of("Send a response private message to a player."));
 
-    public CommandPM(DirectChat plugin) {
+    public CommandRespond(DirectChat plugin) {
         super(plugin);
     }
 
@@ -35,41 +35,45 @@ public class CommandPM extends CommandBase {
 
         s = s.trim();
         String[] args = s.split(" ");
-        if (args.length < 2) {
+        if (args.length == 0) {
             commandSource.sendMessage(Texts.of(TextColors.RED, getUsage(commandSource)));
             return Optional.of(CommandResult.success());
         }
 
-        Optional<Player> receiver = plugin.getGame().getServer().getPlayer(s.substring(0, s.indexOf(' ')));
-        String message = message = s.substring(s.indexOf(' ') + 1, s.length());
-
-        if (!receiver.isPresent()) {
-            commandSource.sendMessage(Texts.of(TextColors.RED, "Invalid player."));
+        Optional<Member> rec = member.getRespond();
+        if (!rec.isPresent()) {
+            commandSource.sendMessage(Texts.of(TextColors.RED, "You have no one to respond to ;("));
             return Optional.of(CommandResult.success());
         }
 
-        Member mrec = plugin.getMembers().getValue(receiver.get().getUniqueId().toString());
+        Optional<Player> recP = rec.get().getPlayer();
+        if (!recP.isPresent()) {
+            commandSource.sendMessage(Texts.of(TextColors.RED, "Your response partner is no longer online."));
+            return Optional.of(CommandResult.success());
+        }
+
+        String message = s.trim();
 
         // Add colour if perms
         if (player.hasPermission("directchat.colour")) {
             message = Utilities.formatColours(message);
         }
 
-        String whisperSend = format(Config.whisperSendFormat, player, receiver.get(), message);
-        String whisperReceive = format(Config.whisperReceiveFormat, player, receiver.get(), message);
-        String whisperSnoop = format(Config.whisperSnooperFormat, player, receiver.get(), message);
+        String whisperSend = format(Config.whisperSendFormat, player, recP.get(), message);
+        String whisperReceive = format(Config.whisperReceiveFormat, player, recP.get(), message);
+        String whisperSnoop = format(Config.whisperSnooperFormat, player, recP.get(), message);
 
         player.sendMessage(Texts.of(whisperSend));
-        receiver.get().sendMessage(Texts.of(whisperReceive));
+        recP.get().sendMessage(Texts.of(whisperReceive));
 
         for (Member admin : plugin.getMembers().getMap().values()) {
-            if (admin.getSnooperData().isWhisper() && !admin.equals(mrec) && !admin.equals(member)) {
+            if (admin.getSnooperData().isWhisper() && !admin.equals(rec.get()) && !admin.equals(member)) {
                 admin.sendMessage(Texts.of(whisperSnoop));
             }
         }
 
-        member.setRespond(Optional.of(mrec));
-        mrec.setRespond(Optional.of(member));
+        member.setRespond(Optional.of(rec.get()));
+        rec.get().setRespond(Optional.of(member));
         return Optional.of(CommandResult.success());
     }
 
@@ -82,7 +86,7 @@ public class CommandPM extends CommandBase {
     }
 
     public Text getUsage(CommandSource commandSource) {
-        return Texts.of("/pm <name> <message ...>");
+        return Texts.of("/r <message ...>");
     }
 
     private String format(String format, Player sender, Player receiver, String message) {

@@ -186,20 +186,29 @@ public class Channel {
         Optional<Player> pa = a.getPlayer();
         Optional<Player> pb = b.getPlayer();
 
+        // If it's the same player, return true
         if (a.equals(b)) {
             return true;
         }
 
+        // Check if they're both present
         if (!pa.isPresent() || !pb.isPresent()) {
             return false;
         }
 
+        // Check muted
+        if (a.getMuted().contains(this) || b.getMuted().contains(this)) {
+            return false;
+        }
+
+        // Check radius, locality
         if (getRadius() >= 0) {
             if (a.distanceSquaredTo(b) > getRadiusSquared()) { // It is much less expensive to take a power of 2 than of (1/2)
                 return false;
             }
         }
 
+        // Check cross worlds
         if (!isCrossWorlds()) {
             if (!pa.get().getWorld().equals(pb.get().getWorld())) {
                 return false;

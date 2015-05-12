@@ -70,13 +70,15 @@ public class DirectChat {
         // Register commands
         CommandService commandService = game.getCommandDispatcher();
         commandService.register(this, new CommandSnooper(this), "snooper");
-        commandService.register(this, new CommandPM(this), "pm", "message", "m", "whisper", "tell", "w", "msg", "t", "r", "respond");
+        commandService.register(this, new CommandPM(this), "pm", "message", "m", "whisper", "tell", "w", "msg", "t");
+        commandService.register(this, new CommandRespond(this), "r", "respond");
         commandService.register(this, new CommandPrivateChannels(this), "p", "private", "pc");
         commandService.register(this, new CommandJoin(this), "join", "j", "jc");
         commandService.register(this, new CommandSelect(this), "select", "s", "sc");
         commandService.register(this, new CommandLeave(this), "leave", "l", "lc");
         commandService.register(this, new CommandDirectChat(this), "dc", "directchat");
         commandService.register(this, new CommandAdminChat(this), "admin", "a");
+        commandService.register(this, new CommandMute(this), "mute");
 
         // Instantiate managers
         members = new Member.Manager();

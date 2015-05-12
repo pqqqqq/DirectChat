@@ -94,6 +94,10 @@ public class CommandPrivateChannels extends CommandBase {
             }
 
             Member invm = plugin.getMembers().getValue(inv.get().getUniqueId().toString());
+            if (invm.isMuteInvitations()) {
+                commandSource.sendMessage(Texts.of(TextColors.RED, "This player has turned invitations off."));
+                return Optional.of(CommandResult.success());
+            }
 
             if (pc.getInvitations().contains(inv)) {
                 commandSource.sendMessage(Texts.of(TextColors.RED, "You have already sent an invitation to this player."));
