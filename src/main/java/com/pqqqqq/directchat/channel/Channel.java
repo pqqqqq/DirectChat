@@ -17,8 +17,9 @@ import java.util.Set;
  * Represents a chat channel that contains {@link Member}s
  */
 public class Channel {
+    public static Channel def = null;
+    public static Channel admin = null;
     private final String name;
-
     // Config options
     private String format = null; // The format as to which chat messages for members chatting in this group are given.
     private String joinMessage = null; // The message sent to a player joining this channel.
@@ -30,11 +31,7 @@ public class Channel {
     private boolean leaveOnExit = false; // Whether this channel is left by the user when they leave the server.
     private int radius = -1; // The radius, or locality of the channel. Anything less than 0 specifies a global channel.
     private List<String> permissions = Collections.emptyList(); // The permissions needed to join. None means no permissions are needed.
-
     private Set<Member> members = new HashSet<Member>();
-
-    public static Channel def = null;
-    public static Channel admin = null;
 
     public Channel(String name) {
         this.name = name;
@@ -119,8 +116,8 @@ public class Channel {
         format = format.replace("%MESSAGE%", message);
         format = format.replace("%PLAYERNAME%", sender.getName());
         format = format.replace("%CHANNEL%", getName());
-        format = format.replace("%PREFIX%", Utilities.formatColours(Utilities.getPEXOption(sender, "prefix").get()));
-        format = format.replace("%SUFFIX%", Utilities.formatColours(Utilities.getPEXOption(sender, "suffix").get()));
+        format = format.replace("%PREFIX%", Utilities.formatColour(Utilities.getPEXOption(sender, "prefix").get()));
+        format = format.replace("%SUFFIX%", Utilities.formatColour(Utilities.getPEXOption(sender, "suffix").get()));
         // format = format.replace("%DISPLAYNAME%", sender.getDisplayNameData().getDisplayName().toString()); TODO: Readd when implemented
 
         return format;
@@ -130,12 +127,12 @@ public class Channel {
         return radius;
     }
 
-    public int getRadiusSquared() {
-        return radius * radius;
-    }
-
     public void setRadius(int radius) {
         this.radius = radius;
+    }
+
+    public int getRadiusSquared() {
+        return radius * radius;
     }
 
     public String getJoinMessage() {
@@ -242,10 +239,10 @@ public class Channel {
         return name;
     }
 
-    public static class Manager extends MappedManager<String, Channel> {
+    public enum EnterResult {
+        SUCCESS, INSUFFICIENT_PERMISSIONS, NO_INVITATION, OTHER_FAILURE
     }
 
-    public enum EnterResult {
-        SUCCESS, INSUFFICIENT_PERMISSIONS, NO_INVITATION, OTHER_FAILURE;
+    public static class Manager extends MappedManager<String, Channel> {
     }
 }

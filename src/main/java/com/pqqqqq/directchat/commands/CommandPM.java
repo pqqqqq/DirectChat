@@ -52,7 +52,7 @@ public class CommandPM implements CommandExecutor {
 
         // Add colour if perms
         if (player.hasPermission("directchat.colour")) {
-            message = Utilities.formatColours(message);
+            message = Utilities.formatColour(message);
         }
 
         String whisperSend = format(Config.whisperSendFormat, player, receiver.get(), message);
@@ -75,6 +75,6 @@ public class CommandPM implements CommandExecutor {
 
     private String format(String format, Player sender, Player receiver, String message) {
         return format.replace("%SENDER%", sender.getName()).replace("%RECEIVER%", receiver.getName()).replace("%MESSAGE%", message)
-                .replace("%PREFIX%", Utilities.formatColours(Utilities.getPEXOption(sender, "prefix").get())).replace("%SUFFIX%", Utilities.formatColours(Utilities.getPEXOption(sender, "suffix").get()));
+                .replace("%PREFIX%", Utilities.formatColour(Utilities.getPEXOption(sender, "prefix").get())).replace("%SUFFIX%", Utilities.formatColour(Utilities.getPEXOption(sender, "suffix").get()));
     }
 }

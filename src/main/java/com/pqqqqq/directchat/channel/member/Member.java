@@ -22,24 +22,20 @@ import java.util.*;
 public final class Member {
     private final String uuid;
     private final ChannelSet channels = new ChannelSet();
+    // Admin
+    private final SnooperData snooper;
     private Channel active = null;
-
     // Command settings
-    private Optional<Member> respond = Optional.<Member> absent();
+    private Optional<Member> respond = Optional.absent();
     private Set<Channel> muted = new HashSet<Channel>();
     private boolean muteAllChannels = false;
     private boolean muteInvitations = false;
-
     // Cache
     private String lastCachedUsername;
-    private Optional<Player> cachedPlayer = Optional.<Player> absent();
+    private Optional<Player> cachedPlayer = Optional.absent();
     private long lastActive = -1;
-
     // Extra data
     private Map<String, Object> extraData = new HashMap<String, Object>();
-
-    // Admin
-    private final SnooperData snooper;
 
     /**
      * Creates a {@link Member} instance from a UUID from {@link Player}'s UUID.
@@ -111,14 +107,6 @@ public final class Member {
     }
 
     /**
-     * Sets the active {@link Channel} of the player
-     * @param active the new active channel
-     */
-    public void setActive(Channel active) {
-        this.active = active;
-    }
-
-    /**
      * Gets the {@link PrivateChannel} this player owns, or null if none
      * @return the private channel
      */
@@ -175,7 +163,7 @@ public final class Member {
             }
 
             if (Config.pcBroadcastOnJoin && channel instanceof PrivateChannel) {
-                channel.broadcast(Texts.of(Utilities.formatColours("&f" + getLastCachedUsername() + " &bhas joined the channel: &f" + channel.getName())));
+                channel.broadcast(Texts.of(Utilities.formatColour("&f" + getLastCachedUsername() + " &bhas joined the channel: &f" + channel.getName())));
             }
         }
 
@@ -325,14 +313,6 @@ public final class Member {
     }
 
     /**
-     * Sets millis since the epoch when this member was last active to the current time.
-     * @see System#currentTimeMillis()
-     */
-    public void setLastActive() {
-        this.lastActive = System.currentTimeMillis();
-    }
-
-    /**
      * Sets millis since the epoch when this member was last active.
      * @param lastActive the new time since last active
      * @see System#currentTimeMillis()
@@ -342,12 +322,28 @@ public final class Member {
     }
 
     /**
+     * Sets millis since the epoch when this member was last active to the current time.
+     * @see System#currentTimeMillis()
+     */
+    public void setLastActive() {
+        this.lastActive = System.currentTimeMillis();
+    }
+
+    /**
      * Returns whether this member is considered active, based off of the config.
      * @return if the member is active
      * @see Config#millisLastActive
      */
     public boolean isActive() {
         return (System.currentTimeMillis() - this.lastActive) < Config.millisLastActive;
+    }
+
+    /**
+     * Sets the active {@link Channel} of the player
+     * @param active the new active channel
+     */
+    public void setActive(Channel active) {
+        this.active = active;
     }
 
     /**

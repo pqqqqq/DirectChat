@@ -68,7 +68,7 @@ public class CommandAdminChat implements CommandExecutor {
             // Say into admin chat
             String message = arguments.<String> getOne("Message").get();
             if (player.hasPermission("directchat.colour")) {
-                message = Utilities.formatColours(message);
+                message = Utilities.formatColour(message);
             }
 
             Channel.admin.broadcast(Texts.of(Channel.admin.formatMessage(player, member, message.trim())));

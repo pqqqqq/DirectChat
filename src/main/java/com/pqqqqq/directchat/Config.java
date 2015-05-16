@@ -16,22 +16,19 @@ import java.util.List;
  * Created by Kevin on 2015-05-03.
  */
 public class Config {
-    private File file;
-    private ConfigurationLoader<CommentedConfigurationNode> configManager;
-    private DirectChat plugin;
-
     public static List<String> blacklistedWords;
     public static List<String> whitelistedURLs;
     public static long millisLastActive;
     public static boolean soundOnMention;
-
     public static String pcJoinMessage;
     public static String pcFormat;
     public static boolean pcBroadcastOnJoin;
-
     public static String whisperSendFormat;
     public static String whisperReceiveFormat;
     public static String whisperSnooperFormat;
+    private File file;
+    private ConfigurationLoader<CommentedConfigurationNode> configManager;
+    private DirectChat plugin;
 
     public Config(DirectChat plugin, File file, ConfigurationLoader<CommentedConfigurationNode> configManager) {
         this.plugin = plugin;
@@ -71,7 +68,7 @@ public class Config {
                 channel.setPerpetual(getNodeAndComment(last, c, "Whether this channel is perpetual, or is always active for users who can join it.", "perpetual").getBoolean(false));
                 channel.setUndetectable(getNodeAndComment(last, c, "Whether this channel is undetectable, or cannot be found by players.", "undetectable").getBoolean(false));
                 channel.setLeaveOnExit(getNodeAndComment(last, c, "Whether this channel is left by the user when they leave the server.", "leave-on-exit").getBoolean(false));
-                channel.setFormat(Utilities.formatColours(getNodeAndComment(last, c,
+                channel.setFormat(Utilities.formatColour(getNodeAndComment(last, c,
                         "The format as to which chat messages for members chatting in this group are given." +
                                 "\n%PLAYERNAME% - The name of the player sending the message." +
                                 "\n%MESSAGE% - The message that the player sent." +
@@ -81,7 +78,7 @@ public class Config {
                                 "\n*INACTIVE* %DISPLAYNAME% - The display name of the sender.", "format").getString("%PLAYERNAME%: %MESSAGE%")));
                 channel.setRadius(getNodeAndComment(last, c, "The radius, or locality of the channel. Anything less than 0 specifies a global channel.", "radius").getInt(-1));
 
-                channel.setJoinMessage(Utilities.formatColours(getNodeAndComment(last, c,
+                channel.setJoinMessage(Utilities.formatColour(getNodeAndComment(last, c,
                         "The message sent to a player joining this channel." +
                                 "\n%CHANNEL% The channel they are joining.", "enterance", "joinMessage").getString("You have joined %CHANNEL%")));
                 channel.setPermissions(getNodeAndComment(last, c, "The permissions needed to join. None means no permissions are needed.", "enterance", "permissions").getList(new Function<Object, String>() {
@@ -131,10 +128,10 @@ public class Config {
 
             // Private channels
             CommentedConfigurationNode pc = getNodeAndComment(root, "Private channel settings.", "private-channel");
-            pcJoinMessage = Utilities.formatColours(getNodeAndComment(pc,
+            pcJoinMessage = Utilities.formatColour(getNodeAndComment(pc,
                     "The generic join message for private channels. This inherits all placeholders from channel join message, plus:" +
                             "\n%OWNER% - The owner of the private channel.", "join-message").getString("You have joined %CHANNEL% owned by %OWNER%"));
-            pcFormat = Utilities.formatColours(getNodeAndComment(pc, "The generic format for private channels. This inherits all placeholders from channel format.", "format").getString("[PM] %PLAYERNAME%: %MESSAGE%"));
+            pcFormat = Utilities.formatColour(getNodeAndComment(pc, "The generic format for private channels. This inherits all placeholders from channel format.", "format").getString("[PM] %PLAYERNAME%: %MESSAGE%"));
             pcBroadcastOnJoin = getNodeAndComment(pc, "Whether to broadcast to all members in the private channel when a new member joins.", "broadcast-on-join").getBoolean(true);
 
             // Whisper
@@ -144,9 +141,9 @@ public class Config {
                             "\n%SENDER% - The sender of the whisper." +
                             "\n%RECEIVER% - The receiver of the whisper." +
                             "\n%MESSAGE% - The message sent.", "format");
-            whisperSendFormat = Utilities.formatColours(getNodeAndComment(whisperFormat, "The format the whisper sender sees.", "send").getString("[To %RECEIVER%]: %MESSAGE%"));
-            whisperReceiveFormat = Utilities.formatColours(getNodeAndComment(whisperFormat, "The format the whisper receiver sees.", "receive").getString("[From %SENDER%]: %MESSAGE%"));
-            whisperSnooperFormat = Utilities.formatColours(getNodeAndComment(whisperFormat, "The format a snooping admin sees.", "snooper").getString("[%SENDER% -> %RECEIVER%]: %MESSAGE%"));
+            whisperSendFormat = Utilities.formatColour(getNodeAndComment(whisperFormat, "The format the whisper sender sees.", "send").getString("[To %RECEIVER%]: %MESSAGE%"));
+            whisperReceiveFormat = Utilities.formatColour(getNodeAndComment(whisperFormat, "The format the whisper receiver sees.", "receive").getString("[From %SENDER%]: %MESSAGE%"));
+            whisperSnooperFormat = Utilities.formatColour(getNodeAndComment(whisperFormat, "The format a snooping admin sees.", "snooper").getString("[%SENDER% -> %RECEIVER%]: %MESSAGE%"));
 
             configManager.save(root);
         } catch (Exception e) {

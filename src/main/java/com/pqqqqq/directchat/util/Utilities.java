@@ -17,13 +17,21 @@ public class Utilities {
     private static final Pattern URL_PATTERN = Pattern.compile("([^\\.\\,\\s]+?)([(\\.|\\,)]+?)([^\\.\\,\\s]+?)($|\\s)");
 
     @SuppressWarnings("deprecation")
-    public static String formatColours(String str) {
-        return Texts.replaceCodes(str, '&');
+    public static String formatColour(String str) {
+        if (str == null) {
+            return null;
+        }
+
+        return str.replaceAll("&([0-9a-fA-FkKlLmMnNoOrR])", Texts.getLegacyChar() + "$1");
     }
 
     @SuppressWarnings("deprecation")
-    public static String unformatColours(String str) {
-        return Texts.stripCodes(str);
+    public static String unformatColour(String str) {
+        if (str == null) {
+            return null;
+        }
+
+        return str.replaceAll(Texts.getLegacyChar() + "([0-9a-fA-FkKlLmMnNoOrR])", "&$1");
     }
 
     public static boolean filter(Player player, String message) {

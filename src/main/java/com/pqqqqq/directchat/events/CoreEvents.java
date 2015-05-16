@@ -40,7 +40,7 @@ public class CoreEvents {
 
         // Add colour if they have permissions
         if (player.hasPermission("directchat.colour")) {
-            raw = Utilities.formatColours(raw);
+            raw = Utilities.formatColour(raw);
         }
 
         // Return if profanity/advertising
@@ -61,7 +61,7 @@ public class CoreEvents {
         Text formatted = Texts.of(format);
 
         channel.onMessage(member, formatted);
-        plugin.getLogger().info(Utilities.unformatColours(format));
+        plugin.getLogger().info(Utilities.unformatColour(format));
 
         for (Member channelMember : plugin.getMembers().getMap().values()) {
             // First and foremost check if this player is online to receive a message. Also check if they have any mutes on.
