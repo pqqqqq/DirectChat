@@ -1,12 +1,10 @@
 package com.pqqqqq.directchat.events;
 
-import com.pqqqqq.directchat.Config;
 import com.pqqqqq.directchat.DirectChat;
 import com.pqqqqq.directchat.channel.Channel;
 import com.pqqqqq.directchat.channel.PrivateChannel;
 import com.pqqqqq.directchat.channel.member.Member;
 import com.pqqqqq.directchat.util.Utilities;
-import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.Subscribe;
@@ -28,7 +26,7 @@ public class CoreEvents {
 
     @Subscribe(order = Order.LAST)
     public void chat(PlayerChatEvent event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         String uuid = player.getProfile().getUniqueId().toString();
 
         Text message = event.getMessage();
@@ -101,7 +99,7 @@ public class CoreEvents {
 
     @Subscribe
     public void join(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         String uuid = player.getUniqueId().toString();
 
         if (!plugin.getMembers().contains(uuid)) {
@@ -111,7 +109,7 @@ public class CoreEvents {
 
     @Subscribe
     public void leave(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         Member member = plugin.getMembers().getValue(player.getUniqueId().toString());
 
         if (member == null) {

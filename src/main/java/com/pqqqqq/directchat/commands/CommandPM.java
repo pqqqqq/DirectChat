@@ -6,46 +6,46 @@ import com.pqqqqq.directchat.DirectChat;
 import com.pqqqqq.directchat.channel.member.Member;
 import com.pqqqqq.directchat.util.Utilities;
 import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.command.CommandException;
 import org.spongepowered.api.util.command.CommandResult;
 import org.spongepowered.api.util.command.CommandSource;
+import org.spongepowered.api.util.command.args.CommandContext;
+import org.spongepowered.api.util.command.args.GenericArguments;
+import org.spongepowered.api.util.command.spec.CommandExecutor;
+import org.spongepowered.api.util.command.spec.CommandSpec;
 
 /**
  * Created by Kevin on 2015-05-04.
  */
-public class CommandPM extends CommandBase {
-    private static final Optional<Text> desc = Optional.<Text> of(Texts.of("Send a private message to a player."));
-    private static final Optional<Text> help = Optional.<Text> of(Texts.of("Send a private message to a player."));
+public class CommandPM implements CommandExecutor {
+    private DirectChat plugin;
 
-    public CommandPM(DirectChat plugin) {
-        super(plugin);
+    private CommandPM(DirectChat plugin) {
+        this.plugin = plugin;
     }
 
-    public Optional<CommandResult> process(CommandSource commandSource, String s) throws CommandException {
+    public static CommandSpec build(DirectChat plugin) {
+        return CommandSpec.builder().setExecutor(new CommandPM(plugin)).setDescription(Texts.of(TextColors.AQUA, "Private messages a player"))
+                .setArguments(GenericArguments.seq(GenericArguments.player(Texts.of("Player"), plugin.getGame()), GenericArguments.remainingJoinedStrings(Texts.of("Message")))).build();
+    }
+
+    public CommandResult execute(CommandSource commandSource, CommandContext arguments) throws CommandException {
         if (!(commandSource instanceof Player)) {
             commandSource.sendMessage(Texts.of(TextColors.RED, "Player-only command."));
-            return Optional.of(CommandResult.success());
+            return CommandResult.success();
         }
 
         Player player = (Player) commandSource;
         Member member = plugin.getMembers().getValue(player.getUniqueId().toString());
 
-        s = s.trim();
-        String[] args = s.split(" ");
-        if (args.length < 2) {
-            commandSource.sendMessage(Texts.of(TextColors.RED, getUsage(commandSource)));
-            return Optional.of(CommandResult.success());
-        }
-
-        Optional<Player> receiver = plugin.getGame().getServer().getPlayer(s.substring(0, s.indexOf(' ')));
-        String message = message = s.substring(s.indexOf(' ') + 1, s.length());
+        Optional<Player> receiver = arguments.getOne("Player");
+        String message = arguments.<String> getOne("Message").get().trim();
 
         if (!receiver.isPresent()) {
             commandSource.sendMessage(Texts.of(TextColors.RED, "Invalid player."));
-            return Optional.of(CommandResult.success());
+            return CommandResult.success();
         }
 
         Member mrec = plugin.getMembers().getValue(receiver.get().getUniqueId().toString());
@@ -70,19 +70,7 @@ public class CommandPM extends CommandBase {
 
         member.setRespond(Optional.of(mrec));
         mrec.setRespond(Optional.of(member));
-        return Optional.of(CommandResult.success());
-    }
-
-    public Optional<Text> getShortDescription(CommandSource commandSource) {
-        return desc;
-    }
-
-    public Optional<Text> getHelp(CommandSource commandSource) {
-        return help;
-    }
-
-    public Text getUsage(CommandSource commandSource) {
-        return Texts.of("/pm <name> <message ...>");
+        return CommandResult.success();
     }
 
     private String format(String format, Player sender, Player receiver, String message) {

@@ -5,6 +5,13 @@ import com.google.inject.Inject;
 import com.pqqqqq.directchat.channel.Channel;
 import com.pqqqqq.directchat.channel.member.Member;
 import com.pqqqqq.directchat.commands.*;
+import com.pqqqqq.directchat.commands.directchat.CommandInfo;
+import com.pqqqqq.directchat.commands.directchat.CommandReload;
+import com.pqqqqq.directchat.commands.mute.CommandMuteChannel;
+import com.pqqqqq.directchat.commands.mute.CommandMuteInvite;
+import com.pqqqqq.directchat.commands.privatechannel.CommandCreate;
+import com.pqqqqq.directchat.commands.privatechannel.CommandInvite;
+import com.pqqqqq.directchat.commands.privatechannel.CommandKick;
 import com.pqqqqq.directchat.events.CoreEvents;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -16,6 +23,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.command.CommandService;
 import org.spongepowered.api.service.config.DefaultConfig;
+import org.spongepowered.api.util.command.dispatcher.SimpleDispatcher;
 
 import java.io.File;
 
@@ -69,16 +77,34 @@ public class DirectChat {
 
         // Register commands
         CommandService commandService = game.getCommandDispatcher();
-        commandService.register(this, new CommandSnooper(this), "snooper");
-        commandService.register(this, new CommandPM(this), "pm", "message", "m", "whisper", "tell", "w", "msg", "t");
-        commandService.register(this, new CommandRespond(this), "r", "respond");
-        commandService.register(this, new CommandPrivateChannels(this), "p", "private", "pc");
-        commandService.register(this, new CommandJoin(this), "join", "j", "jc");
-        commandService.register(this, new CommandSelect(this), "select", "s", "sc");
-        commandService.register(this, new CommandLeave(this), "leave", "l", "lc");
-        commandService.register(this, new CommandDirectChat(this), "dc", "directchat");
-        commandService.register(this, new CommandAdminChat(this), "admin", "a");
-        commandService.register(this, new CommandMute(this), "mute");
+
+        commandService.register(this, CommandSnooper.build(this), "snooper");
+        commandService.register(this, CommandPM.build(this), "pm", "message", "m", "whisper", "tell", "w", "msg", "t");
+        commandService.register(this, CommandRespond.build(this), "r", "respond");
+        commandService.register(this, CommandJoin.build(this), "join", "j", "jc");
+        commandService.register(this, CommandSelect.build(this), "select", "s", "sc");
+        commandService.register(this, CommandLeave.build(this), "leave", "l", "lc");
+        commandService.register(this, CommandAdminChat.build(this), "admin", "a");
+
+        // Private channels
+        SimpleDispatcher privateChannelDispatcher = new SimpleDispatcher();
+        privateChannelDispatcher.register(CommandCreate.build(this), "create", "c");
+        privateChannelDispatcher.register(CommandInvite.build(this), "invite", "inv");
+        privateChannelDispatcher.register(CommandKick.build(this), "kick");
+
+        // Mute
+        SimpleDispatcher muteDispatcher = new SimpleDispatcher();
+        muteDispatcher.register(CommandMuteChannel.build(this), "channel", "ch");
+        muteDispatcher.register(CommandMuteInvite.build(this), "invite", "inv");
+
+        // Direct chat commands
+        SimpleDispatcher dcDispatcher = new SimpleDispatcher();
+        dcDispatcher.register(CommandInfo.build(this), "info", "inf");
+        dcDispatcher.register(CommandReload.build(this), "reload");
+
+        commandService.register(this, privateChannelDispatcher, "pc", "privatechannel", "pchannel", "privatechannels", "privatec", "p");
+        commandService.register(this, muteDispatcher, "mutechannel", "mutec");
+        commandService.register(this, dcDispatcher, "dc", "directchat");
 
         // Instantiate managers
         members = new Member.Manager();
